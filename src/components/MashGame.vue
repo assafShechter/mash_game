@@ -67,7 +67,7 @@ const {
         <div v-if="magicNumber" class="magic-number-display">
           Chosen Number: <span>{{ magicNumber }}</span>
         </div>
-        <p v-if="!allOptionsFilled && !isGameRunning" class="warning">
+        <p v-if="!allOptionsFilled && !isGameRunning" class="disclaimer">
           For the game to begin please fill each category's options. It may have between {{ config.optionsAmountMin }}
           and {{ config.optionsAmountMax }} options
           filled
