@@ -108,7 +108,7 @@ const runElimination = async () => {
     }
 
     // Delay for animation effect
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise(resolve => setTimeout(resolve, 800))
 
     updateFlattened()
     if (flattenedOptions.length === 0) break
@@ -181,6 +181,9 @@ const resetGame = () => {
       </div>
 
       <div class="controls">
+        <div v-if="magicNumber" class="magic-number-display">
+          Chosen Number: <span>{{ magicNumber }}</span>
+        </div>
         <p v-if="!allOptionsFilled && !isSpinning" class="warning">
           Each category must have 4 or 5 options filled!
         </p>
@@ -194,6 +197,9 @@ const resetGame = () => {
     </div>
 
     <div v-else class="results">
+      <div v-if="magicNumber" class="magic-number-display results-number">
+        Chosen Number: <span>{{ magicNumber }}</span>
+      </div>
       <h2>Your Future:</h2>
       <ul>
         <li v-for="category in categories" :key="category.id">
@@ -326,5 +332,23 @@ ul {
 
 li {
   margin-bottom: 10px;
+}
+
+.magic-number-display {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.magic-number-display span {
+  color: #42b983;
+  font-size: 2rem;
+}
+
+.results-number {
+  border-bottom: 1px solid #42b983;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
 }
 </style>
