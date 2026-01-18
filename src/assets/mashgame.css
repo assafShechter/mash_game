@@ -24,6 +24,22 @@
     gap: 5px;
 }
 
+.mash-game .category-name-input {
+    margin-bottom: 12px;
+}
+
+.mash-game .category-name-input input {
+    font-size: 1.1rem;
+    padding: 10px;
+    font-weight: bold;
+    border: 2px solid #ddd;
+}
+
+.mash-game .category-name-input input:focus {
+    border-color: #42b983;
+    outline: none;
+}
+
 .mash-game input {
     padding: 8px;
     border-radius: 4px;

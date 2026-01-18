@@ -174,9 +174,9 @@ const resetGame = () => {
         </button>
       </div>
 
-      <div class="add-category category-card">
+      <div v-if="!isGameRunning" class="add-category category-card">
         <h3>Add Category</h3>
-        <div class="option-input">
+        <div class="category-name-input">
           <input
               v-model="newCategoryName"
               placeholder="Category Name"
@@ -194,8 +194,9 @@ const resetGame = () => {
           Chosen Number: <span>{{ magicNumber }}</span>
         </div>
         <p v-if="!allOptionsFilled && !isGameRunning" class="warning">
-          Each category must have between {{ config.optionsAmountMin }} and {{ config.optionsAmountMax }} options
-          filled!
+          For the game to begin please fill each category's options. It may have between {{ config.optionsAmountMin }}
+          and {{ config.optionsAmountMax }} options
+          filled
         </p>
         <button
             @click="startElimination"
