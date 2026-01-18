@@ -6,6 +6,12 @@ import '../assets/mashgame.css'
 
 const playRhythmMS = 800;
 
+const createDefaultOptions = () => Array.from({length: config.optionsAmountMin}, () => ({
+  text: '',
+  eliminated: false,
+  result: false
+}))
+
 const initCategories = (): Category[] => {
   return config.categories.map(cat => {
     const isConstant = (cat as any).isConstant || false
@@ -13,7 +19,7 @@ const initCategories = (): Category[] => {
 
     // If not constant and empty, initialize with config.optionsAmountMin empty options
     if (!isConstant && options.length === 0) {
-      options = Array.from({length: config.optionsAmountMin}, () => ({text: '', eliminated: false, result: false}))
+      options = createDefaultOptions()
     }
 
     return {
@@ -34,7 +40,8 @@ const addCategory = () => {
     categories.push({
       id: Date.now().toString(),
       name: newCategoryName.value.trim(),
-      options: Array.from({length: config.optionsAmountMin}, () => ({text: '', eliminated: false, result: false}))
+      isConstant: false,
+      options: createDefaultOptions()
     })
     newCategoryName.value = ''
   }
