@@ -78,6 +78,13 @@ const {
         >
           {{ isGameRunning ? 'Eliminating...' : 'Start Game' }}
         </button>
+        <button
+            v-if="!isGameRunning"
+            @click="game.resetCategories()"
+            class="reset-categories-btn"
+        >
+          Reset Categories
+        </button>
       </div>
     </div>
 

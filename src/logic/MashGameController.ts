@@ -132,6 +132,10 @@ export class MashGameController {
         this.isGameRunning.value = false
     }
 
+    public resetCategories() {
+        this.init()
+    }
+
     public resetGame() {
         this.init()
         this.magicNumber.value = null
