@@ -69,6 +69,7 @@ export class MashGameController {
         }
     }
 
+    // TODO: make this less eager and will make app a bit smoother
     public allOptionsFilled = computed(() => {
         return this.categories.every(cat =>
             cat.options.length >= config.optionsAmountMin &&
