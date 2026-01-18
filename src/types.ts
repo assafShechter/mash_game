@@ -8,6 +8,7 @@ export interface Category {
     id: string;
     name: string;
     options: Option[];
+    isConstant?: boolean;
 }
 
 export interface FlattenedOption {

@@ -1,53 +1,68 @@
 <script setup lang="ts">
 import {ref, reactive, computed} from 'vue'
-import type {Category, FlattenedOption} from '../types'
+import type {Category, FlattenedOption} from '@/types'
+import config from '../config/categories.json'
 
-const categories = reactive<Category[]>([
-  {
-    id: 'mash',
-    name: 'MASH',
-    options: [
-      {text: 'Mansion', eliminated: false, result: false},
-      {text: 'Apartment', eliminated: false, result: false},
-      {text: 'Shack', eliminated: false, result: false},
-      {text: 'House', eliminated: false, result: false}
-    ]
-  },
-  {
-    id: 'spouse',
-    name: 'Spouse',
-    options: [
-      {text: '', eliminated: false, result: false},
-      {text: '', eliminated: false, result: false},
-      {text: '', eliminated: false, result: false}
-    ]
-  },
-  {
-    id: 'job',
-    name: 'Job',
-    options: [
-      {text: '', eliminated: false, result: false},
-      {text: '', eliminated: false, result: false},
-      {text: '', eliminated: false, result: false}
-    ]
-  },
-  {
-    id: 'kids',
-    name: 'Number of Kids',
-    options: [
-      {text: '', eliminated: false, result: false},
-      {text: '', eliminated: false, result: false},
-      {text: '', eliminated: false, result: false}
-    ]
+const initCategories = (): Category[] => {
+  return config.categories.map(cat => {
+    const isConstant = (cat as any).isConstant || false
+    let options = cat.options.map(opt => ({...opt}))
+
+    // If not constant and empty, initialize with 4 empty options
+    if (!isConstant && options.length === 0) {
+      options = Array.from({length: 4}, () => ({text: '', eliminated: false, result: false}))
+    }
+
+    return {
+      id: cat.id,
+      name: cat.name,
+      isConstant,
+      options
+    }
+  })
+}
+
+const categories = reactive<Category[]>(initCategories())
+
+const newCategoryName = ref('')
+
+const addCategory = () => {
+  if (newCategoryName.value.trim()) {
+    categories.push({
+      id: Date.now().toString(),
+      name: newCategoryName.value.trim(),
+      options: [
+        {text: '', eliminated: false, result: false},
+        {text: '', eliminated: false, result: false},
+        {text: '', eliminated: false, result: false},
+        {text: '', eliminated: false, result: false}
+      ]
+    })
+    newCategoryName.value = ''
   }
-])
+}
+
+const addOption = (catIdx: number) => {
+  if (categories[catIdx].options.length < 5) {
+    categories[catIdx].options.push({text: '', eliminated: false, result: false})
+  }
+}
+
+const removeOption = (catIdx: number, optIdx: number) => {
+  if (categories[catIdx].options.length > 4) {
+    categories[catIdx].options.splice(optIdx, 1)
+  }
+}
 
 const magicNumber = ref<number | null>(null)
 const isSpinning = ref(false)
 const gameFinished = ref(false)
 
 const allOptionsFilled = computed(() => {
-  return categories.every(cat => cat.options.every(opt => opt.text.trim() !== ''))
+  return categories.every(cat =>
+      (cat.options.length === 4 || cat.options.length === 5) &&
+      cat.options.every(opt => opt.text.trim() !== '')
+  )
 })
 
 const startElimination = () => {
@@ -86,7 +101,7 @@ const runElimination = async () => {
     const toEliminate = flattenedOptions[currentIndex]
     categories[toEliminate.catIdx].options[toEliminate.optIdx].eliminated = true
 
-    // Check if category now has only one option left
+    // Check if the category now has only one option left
     const remainingInCat = categories[toEliminate.catIdx].options.filter(o => !o.eliminated)
     if (remainingInCat.length === 1) {
       remainingInCat[0].result = true
@@ -111,13 +126,8 @@ const runElimination = async () => {
 }
 
 const resetGame = () => {
-  categories.forEach(cat => {
-    cat.options.forEach(opt => {
-      opt.eliminated = false
-      opt.result = false
-      if (cat.id !== 'mash') opt.text = ''
-    })
-  })
+  const initial = initCategories()
+  categories.splice(0, categories.length, ...initial)
   magicNumber.value = null
   gameFinished.value = false
 }
@@ -131,15 +141,49 @@ const resetGame = () => {
         <div v-for="(option, optIdx) in category.options" :key="optIdx" class="option-input">
           <input
               v-model="option.text"
-              :disabled="category.id === 'mash' || isSpinning"
+              :disabled="category.isConstant || isSpinning"
               :placeholder="'Option ' + (optIdx + 1)"
           />
+          <button
+              v-if="!category.isConstant && category.options.length > 4"
+              @click="removeOption(catIdx, optIdx)"
+              class="remove-opt-btn"
+              :disabled="isSpinning"
+          >
+            ×
+          </button>
           <span v-if="option.eliminated" class="eliminated">X</span>
           <span v-if="option.result" class="result-check">✓</span>
         </div>
+        <button
+            v-if="!category.isConstant && category.options.length < 5"
+            @click="addOption(catIdx)"
+            class="add-opt-btn"
+            :disabled="isSpinning"
+        >
+          + Add Option
+        </button>
+      </div>
+
+      <div class="add-category category-card">
+        <h3>Add Category</h3>
+        <div class="option-input">
+          <input
+              v-model="newCategoryName"
+              placeholder="Category Name"
+              @keyup.enter="addCategory"
+              :disabled="isSpinning"
+          />
+        </div>
+        <button @click="addCategory" :disabled="!newCategoryName.trim() || isSpinning" class="add-btn">
+          + Add
+        </button>
       </div>
 
       <div class="controls">
+        <p v-if="!allOptionsFilled && !isSpinning" class="warning">
+          Each category must have 4 or 5 options filled!
+        </p>
         <button
             @click="startElimination"
             :disabled="!allOptionsFilled || isSpinning"
@@ -205,6 +249,12 @@ input {
   font-weight: bold;
 }
 
+.warning {
+  color: #ff4d4f;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
 .controls {
   grid-column: 1 / -1;
   margin-top: 20px;
@@ -218,6 +268,40 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.add-btn {
+  font-size: 1rem;
+  padding: 5px 10px;
+  width: 100%;
+}
+
+.add-opt-btn {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  background-color: #eee;
+  color: #333;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.add-opt-btn:hover:not(:disabled) {
+  background-color: #ddd;
+}
+
+.remove-opt-btn {
+  background: none;
+  border: none;
+  color: #ff4d4f;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 1;
+}
+
+.remove-opt-btn:disabled {
+  color: #ccc;
+  cursor: not-allowed;
 }
 
 button:disabled {
