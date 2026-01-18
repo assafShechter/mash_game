@@ -42,5 +42,9 @@
       "name": "Number of Kids",
       "options": []
     }
-  ]
+  ],
+  "optionsAmountMin": 4,
+  "optionsAmountMax": 5,
+  "magicNumberMin": 3,
+  "magicNumberMax": 10
 }

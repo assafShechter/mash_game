@@ -4,14 +4,16 @@ import type {Category, FlattenedOption} from '@/types'
 import config from '../config/categories.json'
 import '../assets/mashgame.css'
 
+const playRhythmMS = 800;
+
 const initCategories = (): Category[] => {
   return config.categories.map(cat => {
     const isConstant = (cat as any).isConstant || false
     let options = cat.options.map(opt => ({...opt}))
 
-    // If not constant and empty, initialize with 4 empty options
+    // If not constant and empty, initialize with config.optionsAmountMin empty options
     if (!isConstant && options.length === 0) {
-      options = Array.from({length: 4}, () => ({text: '', eliminated: false, result: false}))
+      options = Array.from({length: config.optionsAmountMin}, () => ({text: '', eliminated: false, result: false}))
     }
 
     return {
@@ -32,45 +34,44 @@ const addCategory = () => {
     categories.push({
       id: Date.now().toString(),
       name: newCategoryName.value.trim(),
-      options: [
-        {text: '', eliminated: false, result: false},
-        {text: '', eliminated: false, result: false},
-        {text: '', eliminated: false, result: false},
-        {text: '', eliminated: false, result: false}
-      ]
+      options: Array.from({length: config.optionsAmountMin}, () => ({text: '', eliminated: false, result: false}))
     })
     newCategoryName.value = ''
   }
 }
 
 const addOption = (catIdx: number) => {
-  if (categories[catIdx].options.length < 5) {
+  if (categories[catIdx].options.length < config.optionsAmountMax) {
     categories[catIdx].options.push({text: '', eliminated: false, result: false})
   }
 }
 
 const removeOption = (catIdx: number, optIdx: number) => {
-  if (categories[catIdx].options.length > 4) {
+  if (categories[catIdx].options.length > config.optionsAmountMin) {
     categories[catIdx].options.splice(optIdx, 1)
   }
 }
 
 const magicNumber = ref<number | null>(null)
-const isSpinning = ref(false)
+const isGameRunning = ref(false)
 const gameFinished = ref(false)
 
 const allOptionsFilled = computed(() => {
   return categories.every(cat =>
-      (cat.options.length === 4 || cat.options.length === 5) &&
+      cat.options.length >= config.optionsAmountMin &&
+      cat.options.length <= config.optionsAmountMax &&
       cat.options.every(opt => opt.text.trim() !== '')
   )
 })
 
 const startElimination = () => {
   if (!magicNumber.value) {
-    magicNumber.value = Math.floor(Math.random() * 5) + 3 // Random number between 3 and 7
+    const min = config.magicNumberMin
+    const max = config.magicNumberMax
+    // Sets "magicNumber" to be between min and max
+    magicNumber.value = Math.floor(Math.random() * (max - min + 1)) + min
   }
-  isSpinning.value = true
+  isGameRunning.value = true
   runElimination()
 }
 
@@ -109,7 +110,7 @@ const runElimination = async () => {
     }
 
     // Delay for animation effect
-    await new Promise(resolve => setTimeout(resolve, 800))
+    await new Promise(resolve => setTimeout(resolve, playRhythmMS))
 
     updateFlattened()
     if (flattenedOptions.length === 0) break
@@ -123,7 +124,7 @@ const runElimination = async () => {
   })
 
   gameFinished.value = true
-  isSpinning.value = false
+  isGameRunning.value = false
 }
 
 const resetGame = () => {
@@ -142,14 +143,14 @@ const resetGame = () => {
         <div v-for="(option, optIdx) in category.options" :key="optIdx" class="option-input">
           <input
               v-model="option.text"
-              :disabled="category.isConstant || isSpinning"
+              :disabled="category.isConstant || isGameRunning"
               :placeholder="'Option ' + (optIdx + 1)"
           />
           <button
-              v-if="!category.isConstant && category.options.length > 4"
+              v-if="!category.isConstant && category.options.length > config.optionsAmountMin"
               @click="removeOption(catIdx, optIdx)"
               class="remove-opt-btn"
-              :disabled="isSpinning"
+              :disabled="isGameRunning"
           >
             ×
           </button>
@@ -157,10 +158,10 @@ const resetGame = () => {
           <span v-if="option.result" class="result-check">✓</span>
         </div>
         <button
-            v-if="!category.isConstant && category.options.length < 5"
+            v-if="!category.isConstant && category.options.length < config.optionsAmountMax"
             @click="addOption(catIdx)"
             class="add-opt-btn"
-            :disabled="isSpinning"
+            :disabled="isGameRunning"
         >
           + Add Option
         </button>
@@ -173,10 +174,10 @@ const resetGame = () => {
               v-model="newCategoryName"
               placeholder="Category Name"
               @keyup.enter="addCategory"
-              :disabled="isSpinning"
+              :disabled="isGameRunning"
           />
         </div>
-        <button @click="addCategory" :disabled="!newCategoryName.trim() || isSpinning" class="add-btn">
+        <button @click="addCategory" :disabled="!newCategoryName.trim() || isGameRunning" class="add-btn">
           + Add
         </button>
       </div>
@@ -185,14 +186,15 @@ const resetGame = () => {
         <div v-if="magicNumber" class="magic-number-display">
           Chosen Number: <span>{{ magicNumber }}</span>
         </div>
-        <p v-if="!allOptionsFilled && !isSpinning" class="warning">
-          Each category must have 4 or 5 options filled!
+        <p v-if="!allOptionsFilled && !isGameRunning" class="warning">
+          Each category must have between {{ config.optionsAmountMin }} and {{ config.optionsAmountMax }} options
+          filled!
         </p>
         <button
             @click="startElimination"
-            :disabled="!allOptionsFilled || isSpinning"
+            :disabled="!allOptionsFilled || isGameRunning"
         >
-          {{ isSpinning ? 'Eliminating...' : 'Start Game' }}
+          {{ isGameRunning ? 'Eliminating...' : 'Start Game' }}
         </button>
       </div>
     </div>
