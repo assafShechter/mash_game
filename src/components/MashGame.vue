@@ -11,11 +11,8 @@ const {
   magicNumber,
   isGameRunning,
   gameFinished,
-  allOptionsFilled,
   activeOption,
-  hasDuplicateOptions,
   canStartGame,
-  allCategoriesNamed
 } = game
 </script>
 
