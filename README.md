@@ -72,6 +72,7 @@ The output will be in the `dist` directory.
 - [ ] Add sound effects for elimination steps.
 - [ ] Implement a "Share Result" feature (image export or link sharing).
 - [ ] Dark mode support :).
+- [ ] Make the values of the configuration editable in the UI (like playing speed).
 - [ ] Improve responsiveness and a bit laggy during category name insertion.
 - [ ] Better color scheme.
 - [ ] Add categories' suggestions.
