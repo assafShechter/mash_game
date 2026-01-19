@@ -76,12 +76,28 @@ The output will be in the `dist` directory.
 - [ ] Better color scheme.
 - [ ] Add categories' suggestions.
 - [ ] Make the UI a bit richer.
-- [ ] Keep a history of Results and allow users to compare their results.
+- [ ] Keep a history of Results and allow users to compare their results. (see section below)
 - [ ] Add AI logic (see the section below).
 
 ## AI integration
 
 The game could be enhanced with AI logic that, after a few user inputs, suggests additional options.
 Furthermore, it could propose random categories to make the game more engaging, introducing fresh and diverse options.
-With future features such as sound effects, the game could even adapt sounds to match each option and its outcome—for
+With future features such as sound effects, the game could even adapt sounds to match each option and its outcome-for
 example, if the “Job” result is “Carpenter,” the sound of a hammer could play.
+
+To implement AI-based suggestions, it is recommended to use https://www.npmjs.com/package/ai or an equivalent library.
+The AI would rely on standard algorithms, and its generated content should generally be
+safe for use. All suggested features would operate automatically, without requiring any direct user prompts.
+If additional safeguards are desired, or if a feature allowing users to submit “raw” prompts is introduced, prompts
+should be wrapped with a safety preamble and the
+API should be configured accordingly. For guidance on moderation and safety best practices,
+see: https://platform.openai.com/docs/guides/moderation.
+
+## Results History
+
+At the moment, there is no feature for saving results.
+To implement this functionality, browser-based local storage can be used for a basic solution, for example, by
+leveraging a library such as https://www.npmjs.com/package/localforage.
+Since the application runs entirely on the client side and does not involve a backend server,
+permanent persistence mechanisms such as a database are not necessary in this context.
