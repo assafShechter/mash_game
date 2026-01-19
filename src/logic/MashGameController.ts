@@ -105,8 +105,12 @@ export class MashGameController {
         )
     }
 
+    public allCategoriesNamed = computed(() => {
+        return this.categories.every(cat => cat.name.trim() !== '')
+    })
+
     public canStartGame = computed(() => {
-        return this.allOptionsFilled.value && !this.hasDuplicateOptions.value
+        return this.allCategoriesNamed.value && this.allOptionsFilled.value && !this.hasDuplicateOptions.value
     })
 
     public startElimination() {

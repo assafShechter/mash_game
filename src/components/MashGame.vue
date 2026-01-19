@@ -14,7 +14,8 @@ const {
   allOptionsFilled,
   activeOption,
   hasDuplicateOptions,
-  canStartGame
+  canStartGame,
+  allCategoriesNamed
 } = game
 </script>
 
@@ -29,6 +30,7 @@ const {
                 v-else
                 v-model="category.name"
                 class="category-name-edit"
+                :class="{ 'invalid-category-name': category.name.trim() === '' }"
                 :disabled="isGameRunning"
                 placeholder="Category Name"
             />
@@ -81,8 +83,9 @@ const {
           <div v-if="magicNumber" class="magic-number-display">
             Chosen Number: <span>{{ magicNumber }}</span>
           </div>
-          <p v-if="(!allOptionsFilled || hasDuplicateOptions) && !isGameRunning" class="disclaimer">
-            For the game to begin please fill each category's options with unique values. It may have between
+          <p v-if="(!allOptionsFilled || hasDuplicateOptions || !allCategoriesNamed) && !isGameRunning"
+             class="disclaimer">
+            For the game to begin please fill each category name and options with unique values. It may have between
             {{ config.optionsAmountMin }}
             and {{ config.optionsAmountMax }} options
             filled

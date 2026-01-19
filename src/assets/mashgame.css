@@ -111,6 +111,16 @@
     outline: none;
 }
 
+.mash-game .category-name-edit.invalid-category-name {
+    border-color: #ff4d4f;
+    background-color: #fff1f0;
+}
+
+.mash-game .category-name-edit.invalid-category-name:focus {
+    border-color: #ff4d4f;
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
+}
+
 .mash-game .remove-cat-btn {
     background: none;
     border: 1px solid #ff4d4f;
