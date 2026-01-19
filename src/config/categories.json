@@ -1,0 +1,50 @@
+{
+  "categories": [
+    {
+      "id": "mash",
+      "name": "MASH",
+      "isConstant": true,
+      "options": [
+        {
+          "text": "Mansion",
+          "eliminated": false,
+          "result": false
+        },
+        {
+          "text": "Apartment",
+          "eliminated": false,
+          "result": false
+        },
+        {
+          "text": "Shack",
+          "eliminated": false,
+          "result": false
+        },
+        {
+          "text": "House",
+          "eliminated": false,
+          "result": false
+        }
+      ]
+    },
+    {
+      "id": "spouse",
+      "name": "Spouse",
+      "options": []
+    },
+    {
+      "id": "job",
+      "name": "Job",
+      "options": []
+    },
+    {
+      "id": "kids",
+      "name": "Number of Kids",
+      "options": []
+    }
+  ],
+  "optionsAmountMin": 4,
+  "optionsAmountMax": 5,
+  "magicNumberMin": 3,
+  "magicNumberMax": 10
+}
