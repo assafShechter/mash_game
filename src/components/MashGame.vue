@@ -20,19 +20,18 @@ const {
     <div v-if="!gameFinished" class="setup">
       <div v-for="(category, catIdx) in categories" :key="category.id" class="category-card">
         <h3>{{ category.name }}</h3>
-        <div v-for="(option, optIdx) in category.options" :key="optIdx" class="option-input">
+        <div v-for="(option, optIdx) in category.options" :key="option.id" class="option-input">
           <input
               v-model="option.text"
               :disabled="category.isConstant || isGameRunning"
               :placeholder="'Option ' + (optIdx + 1)"
           />
           <button
-              v-if="!category.isConstant && category.options.length > config.optionsAmountMin"
+              v-if="!category.isConstant && category.options.length > config.optionsAmountMin && !isGameRunning"
               @click="game.removeOption(catIdx, optIdx)"
               class="remove-opt-btn"
-              :disabled="isGameRunning"
           >
-            ×
+            🗑️
           </button>
           <span v-if="option.eliminated" class="eliminated">X</span>
           <span v-if="option.result" class="result-check">✓</span>

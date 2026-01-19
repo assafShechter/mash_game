@@ -1,6 +1,7 @@
 import {reactive, ref, computed} from 'vue'
 import type {Category, FlattenedOption} from '@/types'
 import config from '../config/categories.json'
+import {generateId} from '../utils/id'
 
 export class MashGameController {
     public categories = reactive<Category[]>([])
@@ -16,6 +17,7 @@ export class MashGameController {
 
     private createEmptyOption() {
         return {
+            id: generateId(),
             text: '',
             eliminated: false,
             result: false
@@ -29,7 +31,10 @@ export class MashGameController {
     private init() {
         const initialCategories: Category[] = config.categories.map(cat => {
             const isConstant = (cat as any).isConstant || false
-            let options = cat.options.map(opt => ({...opt}))
+            let options = cat.options.map(opt => ({
+                id: generateId(),
+                ...opt
+            })) as any[]
 
             if (!isConstant && options.length === 0) {
                 options = this.createDefaultOptions()

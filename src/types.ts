@@ -1,4 +1,5 @@
 export interface Option {
+    id: string;
     text: string;
     eliminated: boolean;
     result: boolean;
