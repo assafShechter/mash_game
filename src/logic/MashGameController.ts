@@ -8,7 +8,6 @@ export class MashGameController {
     public magicNumber = ref<number | null>(null)
     public isGameRunning = ref(false)
     public gameFinished = ref(false)
-    public newCategoryName = ref('')
     public activeOption = ref<FlattenedOption | null>(null)
     private playSpeedMS = 1200
 
@@ -52,15 +51,12 @@ export class MashGameController {
     }
 
     public addCategory() {
-        if (this.newCategoryName.value.trim()) {
-            this.categories.push({
-                id: Date.now().toString(),
-                name: this.newCategoryName.value.trim(),
-                isConstant: false,
-                options: this.createDefaultOptions()
-            })
-            this.newCategoryName.value = ''
-        }
+        this.categories.push({
+            id: Date.now().toString(),
+            name: '',
+            isConstant: false,
+            options: this.createDefaultOptions()
+        })
     }
 
     public addOption(catIdx: number) {
@@ -75,6 +71,12 @@ export class MashGameController {
         }
     }
 
+    public removeCategory(catIdx: number) {
+        if (!this.categories[catIdx].isConstant) {
+            this.categories.splice(catIdx, 1)
+        }
+    }
+
     // TODO: make this less eager and will make app a bit smoother
     public allOptionsFilled = computed(() => {
         return this.categories.every(cat =>
@@ -82,6 +84,33 @@ export class MashGameController {
             cat.options.length <= config.optionsAmountMax &&
             cat.options.every(opt => opt.text.trim() !== '')
         )
+    })
+
+    public hasDuplicateOptions = computed(() => {
+        return this.categories.some(cat => {
+            const texts = cat.options.map(o => o.text.trim().toLowerCase()).filter(t => t !== '')
+            const uniqueTexts = new Set(texts)
+            return uniqueTexts.size !== texts.length
+        })
+    })
+
+    public isOptionDuplicate(catIdx: number, optIdx: number): boolean {
+        const category = this.categories[catIdx]
+        const option = category.options[optIdx]
+        const text = option.text.trim().toLowerCase()
+        if (text === '') return false
+
+        return category.options.some((o, idx) =>
+            idx !== optIdx && o.text.trim().toLowerCase() === text
+        )
+    }
+
+    public allCategoriesNamed = computed(() => {
+        return this.categories.every(cat => cat.name.trim() !== '')
+    })
+
+    public canStartGame = computed(() => {
+        return this.allCategoriesNamed.value && this.allOptionsFilled.value && !this.hasDuplicateOptions.value
     })
 
     public startElimination() {
@@ -131,15 +160,28 @@ export class MashGameController {
             currentIndex = currentIndex % flattenedOptions.length
         }
 
-        this.activeOption.value = null
+        this.finalizeGame()
+    }
 
+    private markAllResults() {
         this.categories.forEach(cat => {
             const remaining = cat.options.find(o => !o.eliminated)
             if (remaining) remaining.result = true
         })
+    }
 
-        this.gameFinished.value = true
+    private finalizeGame() {
+        this.activeOption.value = null
         this.isGameRunning.value = false
+        this.gameFinished.value = true
+        this.markAllResults()
+    }
+
+    private clearGameState() {
+        this.magicNumber.value = null
+        this.gameFinished.value = false
+        this.isGameRunning.value = false
+        this.activeOption.value = null
     }
 
     public resetCategories() {
@@ -148,7 +190,16 @@ export class MashGameController {
 
     public resetGame() {
         this.init()
-        this.magicNumber.value = null
-        this.gameFinished.value = false
+        this.clearGameState()
+    }
+
+    public playAgainWithSameOptions() {
+        this.categories.forEach(cat => {
+            cat.options.forEach(opt => {
+                opt.eliminated = false
+                opt.result = false
+            })
+        })
+        this.clearGameState()
     }
 }
