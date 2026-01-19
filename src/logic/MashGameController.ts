@@ -8,7 +8,6 @@ export class MashGameController {
     public magicNumber = ref<number | null>(null)
     public isGameRunning = ref(false)
     public gameFinished = ref(false)
-    public newCategoryName = ref('')
     public activeOption = ref<FlattenedOption | null>(null)
     private playSpeedMS = 1200
 
@@ -52,15 +51,12 @@ export class MashGameController {
     }
 
     public addCategory() {
-        if (this.newCategoryName.value.trim()) {
-            this.categories.push({
-                id: Date.now().toString(),
-                name: this.newCategoryName.value.trim(),
-                isConstant: false,
-                options: this.createDefaultOptions()
-            })
-            this.newCategoryName.value = ''
-        }
+        this.categories.push({
+            id: Date.now().toString(),
+            name: '',
+            isConstant: false,
+            options: this.createDefaultOptions()
+        })
     }
 
     public addOption(catIdx: number) {
@@ -72,6 +68,12 @@ export class MashGameController {
     public removeOption(catIdx: number, optIdx: number) {
         if (this.categories[catIdx].options.length > config.optionsAmountMin) {
             this.categories[catIdx].options.splice(optIdx, 1)
+        }
+    }
+
+    public removeCategory(catIdx: number) {
+        if (!this.categories[catIdx].isConstant) {
+            this.categories.splice(catIdx, 1)
         }
     }
 

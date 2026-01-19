@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import config from '../config/categories.json'
 import {MashGameController} from '../logic/MashGameController'
+import {ICONS} from '../utils/constants'
 import '../assets/mashgame.css'
 
 const game = new MashGameController()
 
 const {
   categories,
-  newCategoryName,
   magicNumber,
   isGameRunning,
   gameFinished,
@@ -20,7 +20,16 @@ const {
   <div class="mash-game">
     <div v-if="!gameFinished" class="setup">
       <div v-for="(category, catIdx) in categories" :key="category.id" class="category-card">
-        <h3>{{ category.name }}</h3>
+        <div class="category-header">
+          <h3 v-if="category.isConstant">{{ category.name }}</h3>
+          <input
+              v-else
+              v-model="category.name"
+              class="category-name-edit"
+              :disabled="isGameRunning"
+              placeholder="Category Name"
+          />
+        </div>
         <div v-for="(option, optIdx) in category.options" :key="option.id" class="option-input" :class="{
           'active-option': activeOption?.catIdx === catIdx && activeOption?.optIdx === optIdx,
           'final-result': option.result
@@ -35,7 +44,7 @@ const {
               @click="game.removeOption(catIdx, optIdx)"
               class="remove-opt-btn"
           >
-            🗑️
+            {{ ICONS.TRASH }}
           </button>
           <span v-if="option.eliminated" class="eliminated">X</span>
           <span v-if="option.result" class="result-check">✓</span>
@@ -48,20 +57,19 @@ const {
         >
           + Add Option
         </button>
+        <button
+            v-if="!category.isConstant && !isGameRunning"
+            @click="game.removeCategory(catIdx)"
+            class="remove-cat-btn"
+            title="Remove Category"
+        >
+          {{ ICONS.TRASH }} Remove Category
+        </button>
       </div>
 
-      <div v-if="!isGameRunning" class="add-category category-card">
-        <h3>Add Category</h3>
-        <div class="category-name-input">
-          <input
-              v-model="newCategoryName"
-              placeholder="Category Name"
-              @keyup.enter="game.addCategory()"
-              :disabled="isGameRunning"
-          />
-        </div>
-        <button @click="game.addCategory()" :disabled="!newCategoryName.trim() || isGameRunning" class="add-btn">
-          + Add
+      <div v-if="!isGameRunning" class="add-category-container">
+        <button @click="game.addCategory()" :disabled="isGameRunning" class="add-category-btn">
+          + Add Category
         </button>
       </div>
 
