@@ -5,7 +5,6 @@ import '../assets/mashgame.css'
 
 const game = new MashGameController()
 
-// Destructure for easier use in template
 const {
   categories,
   newCategoryName,
