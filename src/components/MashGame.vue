@@ -11,7 +11,8 @@ const {
   magicNumber,
   isGameRunning,
   gameFinished,
-  allOptionsFilled
+  allOptionsFilled,
+  activeOption
 } = game
 </script>
 
@@ -20,7 +21,10 @@ const {
     <div v-if="!gameFinished" class="setup">
       <div v-for="(category, catIdx) in categories" :key="category.id" class="category-card">
         <h3>{{ category.name }}</h3>
-        <div v-for="(option, optIdx) in category.options" :key="option.id" class="option-input">
+        <div v-for="(option, optIdx) in category.options" :key="option.id" class="option-input" :class="{
+          'active-option': activeOption?.catIdx === catIdx && activeOption?.optIdx === optIdx,
+          'final-result': option.result
+        }">
           <input
               v-model="option.text"
               :disabled="category.isConstant || isGameRunning"

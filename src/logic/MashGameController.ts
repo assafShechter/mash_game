@@ -9,7 +9,8 @@ export class MashGameController {
     public isGameRunning = ref(false)
     public gameFinished = ref(false)
     public newCategoryName = ref('')
-    private playRhythmMS = 800
+    public activeOption = ref<FlattenedOption | null>(null)
+    private playSpeedMS = 800
 
     constructor() {
         this.init()
@@ -114,6 +115,9 @@ export class MashGameController {
         while (this.categories.some(cat => cat.options.filter(o => !o.eliminated).length > 1)) {
             currentIndex = (currentIndex + (n - 1)) % flattenedOptions.length
 
+            this.activeOption.value = flattenedOptions[currentIndex]
+            await new Promise(resolve => setTimeout(resolve, this.playSpeedMS))
+
             const toEliminate = flattenedOptions[currentIndex]
             this.categories[toEliminate.catIdx].options[toEliminate.optIdx].eliminated = true
 
@@ -122,12 +126,12 @@ export class MashGameController {
                 remainingInCat[0].result = true
             }
 
-            await new Promise(resolve => setTimeout(resolve, this.playRhythmMS))
-
             updateFlattened()
             if (flattenedOptions.length === 0) break
             currentIndex = currentIndex % flattenedOptions.length
         }
+
+        this.activeOption.value = null
 
         this.categories.forEach(cat => {
             const remaining = cat.options.find(o => !o.eliminated)
