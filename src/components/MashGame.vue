@@ -119,7 +119,7 @@ const {
         </div>
       </div>
     </div><!-- end of .mash-game -->
-    <div class="instructions-panel">
+    <div v-if="!gameFinished" class="instructions-panel">
       <h3>How to Play</h3>
       <p>1. Fill in each category with unique options.</p>
       <p>2. Click "Start Game" to begin the elimination process.</p>
