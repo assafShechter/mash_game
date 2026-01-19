@@ -86,6 +86,29 @@ export class MashGameController {
         )
     })
 
+    public hasDuplicateOptions = computed(() => {
+        return this.categories.some(cat => {
+            const texts = cat.options.map(o => o.text.trim().toLowerCase()).filter(t => t !== '')
+            const uniqueTexts = new Set(texts)
+            return uniqueTexts.size !== texts.length
+        })
+    })
+
+    public isOptionDuplicate(catIdx: number, optIdx: number): boolean {
+        const category = this.categories[catIdx]
+        const option = category.options[optIdx]
+        const text = option.text.trim().toLowerCase()
+        if (text === '') return false
+
+        return category.options.some((o, idx) =>
+            idx !== optIdx && o.text.trim().toLowerCase() === text
+        )
+    }
+
+    public canStartGame = computed(() => {
+        return this.allOptionsFilled.value && !this.hasDuplicateOptions.value
+    })
+
     public startElimination() {
         if (!this.magicNumber.value) {
             const min = config.magicNumberMin

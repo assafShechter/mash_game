@@ -102,6 +102,15 @@
     color: #2c3e50;
 }
 
+.mash-game .option-input.duplicate-option {
+    background-color: #fff1f0;
+}
+
+.mash-game .option-input.duplicate-option input {
+    border-color: #ff4d4f;
+    color: #ff4d4f;
+}
+
 .mash-game .add-category-container {
     grid-column: 1 / -1;
     display: flex;

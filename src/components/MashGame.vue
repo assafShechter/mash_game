@@ -12,7 +12,9 @@ const {
   isGameRunning,
   gameFinished,
   allOptionsFilled,
-  activeOption
+  activeOption,
+  hasDuplicateOptions,
+  canStartGame
 } = game
 </script>
 
@@ -32,7 +34,8 @@ const {
         </div>
         <div v-for="(option, optIdx) in category.options" :key="option.id" class="option-input" :class="{
           'active-option': activeOption?.catIdx === catIdx && activeOption?.optIdx === optIdx,
-          'final-result': option.result
+          'final-result': option.result,
+          'duplicate-option': game.isOptionDuplicate(catIdx, optIdx)
         }">
           <input
               v-model="option.text"
@@ -77,14 +80,15 @@ const {
         <div v-if="magicNumber" class="magic-number-display">
           Chosen Number: <span>{{ magicNumber }}</span>
         </div>
-        <p v-if="!allOptionsFilled && !isGameRunning" class="disclaimer">
-          For the game to begin please fill each category's options. It may have between {{ config.optionsAmountMin }}
+        <p v-if="(!allOptionsFilled || hasDuplicateOptions) && !isGameRunning" class="disclaimer">
+          For the game to begin please fill each category's options with unique values. It may have between
+          {{ config.optionsAmountMin }}
           and {{ config.optionsAmountMax }} options
           filled
         </p>
         <button
             @click="game.startElimination()"
-            :disabled="!allOptionsFilled || isGameRunning"
+            :disabled="!canStartGame || isGameRunning"
         >
           {{ isGameRunning ? 'Eliminating...' : 'Start Game' }}
         </button>
