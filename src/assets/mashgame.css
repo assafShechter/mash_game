@@ -163,6 +163,20 @@
     cursor: not-allowed;
 }
 
+.mash-game .result-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.mash-game .secondary-btn {
+    background-color: #6c757d;
+}
+
+.mash-game .secondary-btn:hover {
+    background-color: #5a6268;
+}
+
 .mash-game button:disabled {
     background-color: #ccc;
     cursor: not-allowed;

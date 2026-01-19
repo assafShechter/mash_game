@@ -131,15 +131,28 @@ export class MashGameController {
             currentIndex = currentIndex % flattenedOptions.length
         }
 
-        this.activeOption.value = null
+        this.finalizeGame()
+    }
 
+    private markAllResults() {
         this.categories.forEach(cat => {
             const remaining = cat.options.find(o => !o.eliminated)
             if (remaining) remaining.result = true
         })
+    }
 
-        this.gameFinished.value = true
+    private finalizeGame() {
+        this.activeOption.value = null
         this.isGameRunning.value = false
+        this.gameFinished.value = true
+        this.markAllResults()
+    }
+
+    private clearGameState() {
+        this.magicNumber.value = null
+        this.gameFinished.value = false
+        this.isGameRunning.value = false
+        this.activeOption.value = null
     }
 
     public resetCategories() {
@@ -148,7 +161,16 @@ export class MashGameController {
 
     public resetGame() {
         this.init()
-        this.magicNumber.value = null
-        this.gameFinished.value = false
+        this.clearGameState()
+    }
+
+    public playAgainWithSameOptions() {
+        this.categories.forEach(cat => {
+            cat.options.forEach(opt => {
+                opt.eliminated = false
+                opt.result = false
+            })
+        })
+        this.clearGameState()
     }
 }

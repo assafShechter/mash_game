@@ -100,7 +100,10 @@ const {
           <strong>{{ category.name }}:</strong> {{ category.options.find(o => o.result)?.text }}
         </li>
       </ul>
-      <button @click="game.resetGame()">Play Again</button>
+      <div class="result-actions">
+        <button @click="game.resetGame()">Play again from scratch</button>
+        <button @click="game.playAgainWithSameOptions()" class="secondary-btn">Play again with same options</button>
+      </div>
     </div>
   </div>
 </template>
