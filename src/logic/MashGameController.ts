@@ -10,7 +10,7 @@ export class MashGameController {
     public gameFinished = ref(false)
     public newCategoryName = ref('')
     public activeOption = ref<FlattenedOption | null>(null)
-    private playSpeedMS = 800
+    private playSpeedMS = 1200
 
     constructor() {
         this.init()
