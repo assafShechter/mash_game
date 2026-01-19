@@ -115,7 +115,9 @@ const {
         </ul>
         <div class="result-actions">
           <button @click="game.resetGame()">Play again from scratch</button>
-          <button @click="game.playAgainWithSameOptions()" class="secondary-btn">Play again with same options</button>
+          <button @click="game.playAgainWithSameOptions()" class="secondary-btn">Play again with same categories and
+            options
+          </button>
         </div>
       </div>
     </div><!-- end of .mash-game -->
