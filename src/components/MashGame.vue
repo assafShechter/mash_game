@@ -83,7 +83,7 @@ const {
           <div v-if="magicNumber" class="magic-number-display">
             Chosen Number: <span>{{ magicNumber }}</span>
           </div>
-          <p v-if="(!allOptionsFilled || hasDuplicateOptions || !allCategoriesNamed) && !isGameRunning"
+          <p v-if="!canStartGame && !isGameRunning"
              class="disclaimer">
             For the game to begin please fill each category name and options with unique values. It may have between
             {{ config.optionsAmountMin }}
