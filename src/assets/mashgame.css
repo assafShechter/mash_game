@@ -1,7 +1,64 @@
+.mash-game-container {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
 .mash-game {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    flex: 3;
+}
+
+.instructions-panel {
+    flex: 1;
+    background: #f0f7f4;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #cce3d8;
+    position: sticky;
+    top: 20px;
+}
+
+.instructions-panel h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    border-bottom: 2px solid #42b983;
+    padding-bottom: 8px;
+}
+
+.instructions-panel p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #4a5568;
+}
+
+.instructions-panel a {
+    display: inline-block;
+    margin-top: 15px;
+    color: #42b983;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.instructions-panel a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .mash-game-container {
+        flex-direction: column;
+    }
+
+    .instructions-panel {
+        order: -1;
+        position: static;
+    }
 }
 
 .mash-game .setup {
