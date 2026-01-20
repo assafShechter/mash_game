@@ -12,6 +12,7 @@ const {
   isGameRunning,
   gameFinished,
   activeOption,
+  newEliminatedOption,
   canStartGame,
 } = game
 </script>
@@ -34,6 +35,7 @@ const {
           </div>
           <div v-for="(option, optIdx) in category.options" :key="option.id" class="option-input" :class="{
           'active-option': activeOption?.catIdx === catIdx && activeOption?.optIdx === optIdx,
+          'new-eliminated-option': newEliminatedOption?.catIdx === catIdx && newEliminatedOption?.optIdx === optIdx,
           'final-result': option.result,
           'duplicate-option': game.isOptionDuplicate(catIdx, optIdx)
         }">
