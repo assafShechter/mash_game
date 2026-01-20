@@ -156,6 +156,16 @@
 
 .mash-game .option-input.active-option input {
     border-color: #2196f3;
+}
+
+.mash-game .option-input.new-eliminated-option {
+    background-color: #cc4d4f;
+    transform: scale(1.02);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mash-game .option-input.new-eliminated-option input {
+    border-color: #ff4d4f;
     font-weight: bold;
 }
 

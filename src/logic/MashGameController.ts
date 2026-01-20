@@ -8,8 +8,9 @@ export class MashGameController {
     public magicNumber = ref<number | null>(null)
     public isGameRunning = ref(false)
     public gameFinished = ref(false)
+    public newEliminatedOption = ref<FlattenedOption | null>(null)
     public activeOption = ref<FlattenedOption | null>(null)
-    private playSpeedMS = 1200
+    private playSpeedMS = 500
 
     constructor() {
         this.init()
@@ -138,16 +139,27 @@ export class MashGameController {
         }
 
         updateFlattened()
-        let currentIndex = 0
+        let eliminatedOptionIndex = 0
         const n = this.magicNumber.value!
 
         while (this.categories.some(cat => cat.options.filter(o => !o.eliminated).length > 1)) {
-            currentIndex = (currentIndex + (n - 1)) % flattenedOptions.length
+            // We advance one less to compensate for the previously eliminated option
+            let jumpSize = n - 1;
+            for (let i: number = 0; i < jumpSize; i++) {
+                this.activeOption.value = flattenedOptions[(eliminatedOptionIndex + i) % flattenedOptions.length]
+                await new Promise(resolve => setTimeout(resolve, this.playSpeedMS))
+            }
+            eliminatedOptionIndex = (eliminatedOptionIndex + jumpSize) % flattenedOptions.length
 
-            this.activeOption.value = flattenedOptions[currentIndex]
-            await new Promise(resolve => setTimeout(resolve, this.playSpeedMS))
+            this.activeOption.value = null
+            this.newEliminatedOption.value = flattenedOptions[eliminatedOptionIndex]
 
-            const toEliminate = flattenedOptions[currentIndex]
+            // Give time to see the new eliminated option
+            await new Promise(resolve => setTimeout(resolve, this.playSpeedMS * 2))
+
+            this.newEliminatedOption.value = null
+
+            const toEliminate = flattenedOptions[eliminatedOptionIndex]
             this.categories[toEliminate.catIdx].options[toEliminate.optIdx].eliminated = true
 
             const remainingInCat = this.categories[toEliminate.catIdx].options.filter(o => !o.eliminated)
@@ -157,7 +169,7 @@ export class MashGameController {
 
             updateFlattened()
             if (flattenedOptions.length === 0) break
-            currentIndex = currentIndex % flattenedOptions.length
+            eliminatedOptionIndex = eliminatedOptionIndex % flattenedOptions.length
         }
 
         this.finalizeGame()
@@ -171,6 +183,7 @@ export class MashGameController {
     }
 
     private finalizeGame() {
+        this.newEliminatedOption.value = null
         this.activeOption.value = null
         this.isGameRunning.value = false
         this.gameFinished.value = true
@@ -181,6 +194,7 @@ export class MashGameController {
         this.magicNumber.value = null
         this.gameFinished.value = false
         this.isGameRunning.value = false
+        this.newEliminatedOption.value = null
         this.activeOption.value = null
     }
 
